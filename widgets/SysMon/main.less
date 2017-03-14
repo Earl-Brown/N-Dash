@@ -1,0 +1,65 @@
+header {
+	-webkit-app-region: drag;
+	background-color: darkgray;
+	color: white;
+}
+
+main, footer {
+	background: fade(#C0C0C0, 75%);
+	border-top: 1px solid black;
+}
+
+
+table.memory-state {
+	height: 1em; width: 100%;
+	font-size: small;
+
+	th {
+		width: 1%;
+	}
+
+	td.memory-percent{
+		width: 100%;
+		height: .6em;
+		border: 1px solid black;
+	} 
+	td.memory-total {
+		width: 3em;
+		white-space: nowrap;
+		font-size: small;
+	}	
+}
+
+table.memory-history-graph  {
+	height: 2em; width: 100%;
+	vertical-align: bottom;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	td {
+		vertical-align: bottom;
+	}	
+}
+
+
+table.memory-history-graph td div,
+.meter {
+	color: white;
+	font-weight: bold;
+	font-size: small;
+	padding-left: 0.25em;
+}			
+
+.meter .blue-meter {
+	background-color: blue;
+}
+
+.green-meter {
+	background-color: lightgreen;
+	color: darkblue;
+	font-weight: normal;
+}
+
+.black-meter {
+	background-color: black;
+}
+

@@ -1,0 +1,6 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+	// Controls how folders are being reopened after a restart. Select 'none' to never reopen a folder, 'one' to reopen the last folder you worked on or 'all' to reopen all folders of your last session.
+	"window.reopenFolders": "all",
+	
+}

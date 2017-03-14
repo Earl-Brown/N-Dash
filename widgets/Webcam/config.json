@@ -1,0 +1,51 @@
+{
+  "webcam": {
+    "debug": false,
+    "windowMetrics": {
+      "x": 960,
+      "y": 55,
+      "width": 309,
+      "height": 233
+    },
+    "thickFrame": true,
+    "resizable": true,
+    "color": "white",
+    "frame": false,
+    "titleBarStyle": "hidden",
+    "autoHideMenuBar": true,
+    "transparent": true,
+    "client": {
+      "camera": {
+        "deviceId": "8b23b66b69acbff048ac81978ca9469e0581cfc39ffde0a3bd5f958240ee5206",
+        "kind": "videoinput",
+        "label": "WebcamMax Capture",
+        "groupId": ""
+      }
+    }
+  },
+  "webcam 2": {
+    "debug": false,
+    "windowMetrics": {
+      "x": 1413,
+      "y": 9,
+      "width": 309,
+      "height": 233
+    },
+    "thickFrame": true,
+    "resiable": true,
+    "color": "white",
+    "frame": false,
+    "titleBarStyle": "hidden-inset",
+    "autoHideMenuBar": true,
+    "transparent": true,
+    "client": {
+      "camera": {
+        "deviceId": "13f8ddd96a0a34b5b9ab6b4124df0af81639e5e4faf4d793e3c350d558d19ecd",
+        "kind": "videoinput",
+        "label": "Live! Cam Chat HD VF0790 (041e:4097)",
+        "groupId": ""
+      }
+    }
+  }
+}
+}

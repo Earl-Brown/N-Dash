@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<!--
+Code freely lifted from https://github.com/jhuckaby/webcamjs and http://pixlcore.com/demos/webcamjs/demos/flip.html
+
+and then modified
+
+
+	<todo class="ng-cloak">
+		Save the selection
+		Add a "close" button
+		When the window is closed, mark the widget disabled in config
+		Allow to change camera selection
+		Force sizing to retain perspective
+
+		Find a way to force body to fill the window
+	</todo>
+
+
+-->
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Webcam</title>
+
+
+
+	<style type="text/css">
+		body, html {
+			position: absolute;
+			top: 0; left: 0; bottom: 0; right: 0;
+			padding:2px; margin: 0;
+			overflow: hidden; 
+			background-color: white;
+		}
+
+		body { 
+			border: 1px solid black;
+			font-family: Helvetica, sans-serif; 
+		  -webkit-app-region: drag;
+		}
+
+		.fj, .full-justfied {
+			width: 100%;
+		}
+		
+		.top-aligned, .ta {
+			vertical-align: top;
+		}
+		
+		thead, thead td {
+			border-bottom: 1px solid black;
+			font-weight: bold;
+		}
+
+		#camera-view {
+			overflow: hidden;
+			border: 1px solid black; 
+			float: left;
+		}
+
+		#camera-view, #camera-view * {
+		  -webkit-app-region: drag;
+			position: absolute;
+			top: 0; left: 0; bottom: 0; right: 0;
+		}
+
+		#camera-view video {
+			position: absolute;
+			top: 0; left: 0; bottom: 1px; right: 1px;
+			width: 100%; height: 100%;
+		}
+
+		#camera-list {
+			width: 100%;
+			height: 100%;
+			background-color: white;
+		  -webkit-app-region: no-drag;
+		}
+
+		#camera-list div.choice {
+			background-color: white;
+			color: black;
+			width: 100%;
+			height: 1.5em;
+		}
+
+		#camera-list button {
+			width: 100%;
+			cursor: pointer;
+		}
+
+		div.viewport {
+			width: 100%; height: 100%;
+		}
+
+
+	</style>
+
+<script type="text/javascript" src="/libraries/jquery.js"></script>
+<script type="text/javascript" src="/libraries/bluebird.js"></script>
+<script type="text/javascript" src="/libraries/angular/angular.js"></script>
+<script type="text/javascript" src="/libraries/angular/angular-cookies.js"></script>
+<script type="text/javascript" src="/libraries/sugar.js"></script>
+<script type="text/javascript" src="/libraries/ng-electron.js"></script>
+
+<script type="text/javascript" src="libraries/webcam.js"></script>
+
+<body ng-app="application" ng-controller="config">
+
+<div class="ng-cloak viewport" ng-controller="camera">
+	<div id="camera-view" ng-show="activeCamera != null">&nbsp;</div>
+	<div id="camera-list" ng-show="activeCamera == null && availableCameras != null">
+		<div
+			ng-click="saveConfiguration()"
+		>Select the camera to watch:</div>
+		<div class="choice"
+			ng-repeat="thisCam in availableCameras" 
+		>
+			<button 
+				ng-click="setCamera(thisCam)"
+			>{{thisCam.label}}</button>
+		</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	Sugar.extend();
+
+	var application = angular.module("application", ["electronServices"]); 
+
+	var configController = application.controller("config", [
+		"$scope",
+		"settings",
+		function($scope, settings) {
+			$scope.saveConfiguration = function() {
+				settings.Save();
+			}
+		}
+	]);
+	
+	var cameraController = application.controller("camera", [
+		"$scope",
+		"settings",
+		function($scope, settings) {
+			$scope.activeCamera = null;
+			$scope.availableCameras = null;
+
+			$scope.setCamera = function(camera) {
+				bindWebcam(camera);
+				$scope.activeCamera = camera;
+				$scope.availableCameras = null;
+
+				settings.current.camera = camera;
+				settings.save();
+			}
+
+			function bindWebcam(mediaDeviceInfo) {
+				var cameraSettings = {
+					width: "100%",
+					height: "100%",
+					image_format: 'jpeg',
+					jpeg_quality: 90,
+					flip_horiz: false
+				}
+
+				if(mediaDeviceInfo) {
+					cameraSettings["constraints"] = {
+						mandatory: {
+							sourceId: mediaDeviceInfo.deviceId
+						}
+					}
+				}
+
+				Webcam.reset();
+				Webcam.set(cameraSettings);
+
+				Webcam.attach( '#camera-view' );
+				$scope.activeCamera = mediaDeviceInfo;
+			}
+
+
+			settings
+			.Load()
+			.then((currentConfig) => {
+				var
+					selectedCamera = currentConfig.camera || {},
+					wcmID = selectedCamera.deviceId || null
+				;
+				
+				Webcam
+				.mediaDevices
+				.enumerateDevices().then(
+					deviceList => {
+						var wcmDevice = deviceList.find(device => device.deviceId == wcmID);
+
+						$scope.$apply(() => {
+							if(wcmDevice) bindWebcam(wcmDevice);
+							else {
+								// prompt user for which webcam to use
+								deviceList = deviceList.filter(device => device.kind == "videoinput");
+								if (deviceList.count < 1) {
+									alert("No camera detected");
+								} else if (deviceList.count < 2) {
+									bindWebcam(deviceList[0]);
+								} else {
+									$scope.availableCameras = deviceList;
+								}
+							}
+						})
+					}
+				);
+				
+
+			})
+		}
+	])
+
+	// TODO: turn this into an angular component
+
+	var reloadDelay = "4 hours"
+	;
+	window.jQuery(document).ready(() => {
+		var delay = Date.create(reloadDelay + " from now").millisecondsFromNow();
+		
+		return Promise.delay(delay)
+		.then(function() {
+			document.location.reload();
+			return false;
+		})
+	})
+ </script>	
+</body>
+
+
+
+
+

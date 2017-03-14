@@ -1,0 +1,168 @@
+<html ng-app="app">
+	<head><title>N-Dash</title>
+		<style type="text/css">
+			body {
+				background-color: transparent;
+				border: 1px solid black;
+				position: absolute;
+				top: 0; bottom: 0; left: 0; right: 0;
+				overflow: hidden;
+				padding: 0; margin: 0;
+			}
+
+			table, tr, td, body {
+				margin :0; padding: 0;
+			}
+
+			table {
+				background-color: transparent;
+			}
+
+			td {
+				padding: 1px;
+			}
+
+			table.cpu-history {
+				height: 1em; width: 100%;
+				font-size: small;
+			}
+
+			table.cpu-history th {
+				width: 1%;
+			}
+
+			table.cpu-history td.percent {
+				border: 1px solid black;
+				width: 100%;
+			} 
+
+			table.cpu-history td.graph {
+				width: 100%;
+				border: 1px solid black;
+			} 
+
+			table.cpu-history-graph {
+				height: 2em; width: 100%;
+				vertical-align: bottom;
+				border-spacing: 0px;
+				border-collapse: collapse;
+				
+			}
+
+			table.cpu-history-graph td {
+				vertical-align: bottom;
+			}
+
+			table.cpu-history-graph td div,
+			.blue-meter {
+				background-color: blue;
+				color: white;
+				font-weight: bold;
+				font-size: small;
+				padding-left: 0.25em;
+			}			
+
+			table.cpu-history td.state {
+				height: 100%;
+			}
+
+			table.cpu-history-graph {
+					border-spacing: 0;
+					border-collapse: collapse;
+					font-size: small;
+			}
+
+			table.cpu-history-graph div.data-point {
+					margin: 0; padding: 0;
+			}
+
+			table.cpu-history-graph td {
+					width: 1em;
+					padding: 0px;
+					margin: 0px;
+			}			
+
+			table.time-and-date {
+				font-weight: bold;
+			}
+
+			table.time-and-date td.current-time {
+				text-align: right;
+				white-space: nowrap;
+				font-size: 15pt;
+			}
+
+			table.time-and-date td.current-date {
+				vertical-align: top;
+				font-size: 9pt;
+				text-align: left;
+				width: 100%;
+			}
+
+			table.cpu-state-chart {
+				font-size: 7pt;
+				vertical-align: middle;
+			}
+
+			table.cpu-state-chart th {
+				width: 3em;
+			}
+
+			table.cpu-state-chart td {
+				width: 100%;
+			}
+
+			table.cpu-state-chart td div {
+				height: 4px;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="./main.css" /> 
+	</head>
+<body>
+	<header>
+		<table class="time-and-date" ng-controller="dateTimeController">
+			<tr>
+				<td class="current-date">{{ date.format("{Dow}. {Mon} {d}, {yyyy}") }}</td>
+				<td class="seconds"></td>
+				<td class="current-time">{{ date.format("{h}:{mm} {tt}") }}</td>
+			</tr>
+		</table>
+	</header>
+	<main>
+		<table class="cpu-history" style="table-layout: fixed;" ng-controller="cpuHistoryController">
+			<tr>
+				<th style="width: 2.5em;">CPU</th>
+				<td class="percent" style="overflow: hidden;"><div class="blue-meter" ng-style="{width: totalPercent + '%'}">{{totalPercent.toFixed(0)}}%</div></td>
+			</tr>
+			<tr>
+				<td colspan="2" class="graph"><cpu-history-graph source="history"></cpu-history-graph></td>
+			</tr>
+		</table>
+
+		<div ng-controller="cpuController">
+			<cpu-state-chart source="currentValues"></cpu-state-chart>
+		</div>
+	</main>
+	<footer>
+		<table class="memory-state" ng-controller="memoryController">
+			<tr>
+				<th>RAM</th>
+				<td class="memory-percent"><div class="meter green-meter" ng-style="{width: percentUsed + '%'}">{{ percentUsed.toFixed(0) }}%</div></td>
+				<td class='memory-total'><div> of {{ abbreviateTotal() }}</div></td>
+			</tr>
+		</table>
+	</footer>
+
+	<script type="text/javascript" src="/libraries/sugar.js"></script>
+	<script type="text/javascript" src="/libraries/jquery.js"></script>
+	<script type="text/javascript" src="/libraries/angular.js"></script>
+	<script type="text/javascript">
+		Sugar.extend();
+	</script>
+
+	<script type="text/javascript" src="main.js"></script>
+
+</body>
+</html>

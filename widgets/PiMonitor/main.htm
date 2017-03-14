@@ -1,0 +1,141 @@
+<html><head><title></title>
+
+	<script type="text/javascript" id="electron-fixup" src="/libraries/electron-support.js"></script>
+	<style type="text/css">
+		body { overflow: hidden; font-family: Helvetica, sans-serif; }
+
+		body, div {
+			margin: 0px; padding: 0px;
+		}
+
+		.fj, .full-justfied {
+			width: 100%;
+		}
+		
+		.top-aligned, .ta {
+			vertical-align: top;
+		}
+		
+		.server.up, 
+		.hasStock,
+		.hasStock a 
+		{
+			color: #22bb22;
+			font-weight: bold;
+		}
+		
+		.server.down,
+		.noStock,
+		.noStock a 
+		{
+			color: red;
+			font-weight: bold;
+		}
+		
+		.server li {
+			display: block;
+		}
+		
+		todo {
+			display: none;
+		}
+		
+		#server-bullets {
+			vertical-align: top;
+		}
+	
+	</style>
+</head>
+<body>
+	<div id="status-bar" >
+		<div class="container" >
+			<label for='cbIsActive'><input id='cbIsActive' name='cbIsActive' type='checkbox' ng-model='active'/> <h4 style="display: inline;">Distributers</h4></label>
+			<div ng-class='{hasStock: piSellers.adafruit.hasStock, noStock: !piSellers.adafruit.hasStock}'><a href='http://www.adafruit.com' target="_blank">adafruit</a></div>
+			<div ng-class='{hasStock: piSellers.pimoroni.hasStock, noStock: !piSellers.pimoroni.hasStock}'><a href='http://www.pimoroni.com' target="_blank">pimoroni</a></div>
+			<div ng-class='{hasStock: piSellers.pihut.hasStock, noStock: !piSellers.pihut.hasStock}'><a href='http://www.pihut.com' target="_blank">pihut</a></div>
+		</ul>
+		</div>
+	</div>
+
+	
+	<script type="text/javascript" src="/libraries/jquery.js"></script>
+	<script type="text/javascript" src="/libraries/bluebird.js"></script>
+	<script type="text/javascript" src="/libraries/angular/angular.js"></script>
+	<script type="text/javascript" src="/libraries/angular/angular-cookies.js"></script>
+	<script type="text/javascript" src="/libraries/sugar.min.js"></script>
+
+	<script type='text/javascript'>
+		function checkSeller(seller) {
+			return new Promise(function(resolve, reject) {
+				// issue the http request ... if success, contents should be in the form {"Stock": false}
+				try {
+					return $http({
+						method: "GET",
+						url: seller.url,
+						responseType: 'json'
+					})
+					.then(
+						function(data, status, headers, config, statusText) {
+							var result = data.data;
+							if (result && result.stock) seller.hasStock = result.stock;
+							return result;
+						},
+						function(data, status, headers, config, statusText) {
+							debugger
+							var error = new Error("failure checking " + seller.url);
+							error.data = data;
+							return reject(error);
+						}
+					)
+					["catch"](function(err) {
+						console.log("error checking seller", seller, JSON.stringify(err));
+						return err;
+					});
+				} catch(ex) {
+					return reject(ex);
+				}
+			});
+		}
+			
+		function check() {
+			// check each of the pi sellers
+			var promises = Object.values($scope.piSellers, function(seller) {
+				return checkSeller(seller)
+				["catch"](function(err) {
+					console.log("error checking seller:", err)
+					return err;
+				});
+			});
+			
+			var checkDelay = Date.create($scope.checkDelay + " from now").millisecondsFromNow();
+			
+			Promise.all(promises)
+			.then(function() {
+				return Promise.delay(checkDelay)
+				.then(x => $scope.active)
+				.then(function(active) {if (active) check(); return false;})
+				;
+			})
+			;
+			
+			return promises;
+		}
+		
+		check();
+		
+	}])
+
+	var reloadDelay = "2 hours"
+	;
+	window.jQuery(document).ready(() => {
+		var delay = Date.create(reloadDelay + " from now").millisecondsFromNow();
+		
+		return Promise.delay(delay)
+		.then(function() {
+			document.location.reload();
+			return false;
+		})
+	})
+	</script>
+</body>
+</html>

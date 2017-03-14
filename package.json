@@ -1,0 +1,50 @@
+{
+  "name": "sys-mon",
+  "version": "1.0.0",
+  "description": "Node based system monitor dashboard; prototype of a node desktop application using Angular 1.5",
+  "main": "N-Dash.js",
+  "scripts": {
+    "test": "electron/electron ."
+  },
+  "repository": {},
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "electron": "^1.4.13",
+    "sugar": "^2.0.4",
+    "yargs": "^6.5.0"
+  },
+  "mappedFolders": {
+    "/libraries": "/client-libraries"
+  },
+  "widgets": [
+    {
+      "name": "SysMon",
+      "folder": "SysMon",
+      "entryPoint": "main.htm",
+      "enabled": true
+    },
+    {
+      "name": "webcam",
+      "folder": "WebCam",
+      "entryPoint": "webcam.html",
+      "enabled": false
+    },
+    {
+      "name": "webcam 2",
+      "folder": "WebCam",
+      "entryPoint": "webcam.html",
+      "enabled": false
+    },
+    {
+      "name": "PiMonitor",
+      "folder": "PiMonitor",
+      "entryPoint": "main.htm",
+      "enabled": false
+    }
+  ],
+  "devDependencies": {
+    "electron": "^1.4.13"
+  }
+}
